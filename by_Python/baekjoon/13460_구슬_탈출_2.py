@@ -6,8 +6,6 @@ input = sys.stdin.readline
 
 N, M = map(int, input().split())
 board = [list(input().strip()) for _ in range(N)]
-move_r = [0, 0, -1, 1]
-move_c = [-1, 1, 0, 0]
 
 visited = [[[[False]*M for _ in range(N)] for _ in range(M)] for _ in range(N)]
 
