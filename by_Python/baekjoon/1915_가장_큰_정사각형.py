@@ -3,20 +3,18 @@ import sys
 input = sys.stdin.readline
 
 n, m = map(int, input().split())
-arr = [[0]*(m+1)] + [[0] + list(map(int, list(input().strip())))
-                     for _ in range(n)]
+arr = [list(map(int, list(input().strip()))) for _ in range(n)]
 """
 for row in arr:
     print(row)
 """
 
-# dp[r][c] = 우측 하단 꼭짓점이 (r,c)인 영역 내의 정사각형의 최대 변의 길이
-# 정사각형이 될 수 없을 때는 0으로 표시
-dp = [[0]*(m+1) for _ in range(n+1)]
+# dp[r][c] = 어떤 정사각형의 우측 하단 꼭짓점이 (r, c)일 때, 그 정사각형의 최대 변의 길이가 될 수 있는 값
+dp = [[0]*m for _ in range(n)]
 
-for r in range(1, n+1):
-    for c in range(1, m+1):
-        if r == 1 or c == 1:
+for r in range(n):
+    for c in range(m):
+        if r == 0 or c == 0:
             dp[r][c] = arr[r][c]
 
         elif arr[r][c] == 0:
