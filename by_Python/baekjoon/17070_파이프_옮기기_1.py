@@ -6,9 +6,9 @@ N = int(input().strip())
 arr = [[1]*(N+2)] + [[1] + list(map(int, input().split())) + [1]
                      for _ in range(N)] + [[1]*(N+2)]
 
-# dp[r][c][0] = (r, c)까지 가로로 이동하는 방법의 수
-# dp[r][c][1] = (r, c)까지 세로로 이동하는 방법의 수
-# dp[r][c][2] = (r, c)까지 대각선으로 이동하는 방법의 수
+# dp[r][c][0] = 가로→로 밀어 (r, c)까지 도달하는 방법의 수
+# dp[r][c][1] = 세로↓로 밀어 (r, c)까지 도달하는 방법의 수
+# dp[r][c][2] = 대각선↘으로 밀어 (r, c)까지 도달하는 방법의 수
 dp = [[[0, 0, 0] for _ in range(N+2)] for __ in range(N+2)]
 
 for r in range(1, N+1):
