@@ -4,6 +4,7 @@ input = sys.stdin.readline
 
 def find(i):
     # 노드 i의 부모를 찾는다
+    # 자기 자신이 부모라면 i를 리턴
     if parents[i] == i:
         return i
     parents[i] = find(parents[i])
