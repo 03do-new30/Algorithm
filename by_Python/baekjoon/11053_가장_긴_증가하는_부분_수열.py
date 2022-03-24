@@ -4,6 +4,7 @@ https://namu.wiki/w/%EC%B5%9C%EC%9E%A5%20%EC%A6%9D%EA%B0%80%20%EB%B6%80%EB%B6%84
 """
 
 import sys
+import bisect
 input = sys.stdin.readline
 
 n = int(input().strip())
@@ -37,6 +38,11 @@ def LIS_2():
         if mini[len(mini)-1] < a[i]:
             mini.append(a[i])
         else:
+            # 이분 탐색(logN)을 통해 들어갈 수 있는 인덱스를 찾는다
+            # mini가 정렬되어있으므로 사용 가능
+            idx = bisect.bisect_left(mini, a[i])
+            mini[idx] = a[i]
+            """
             # 이미 존재하는 값이면 스킵
             if a[i] in mini:
                 continue
@@ -45,6 +51,7 @@ def LIS_2():
                 if mini[j] > a[i]:
                     mini[j] = a[i]
                     break
+            """
 
     return len(mini) - 1
 
