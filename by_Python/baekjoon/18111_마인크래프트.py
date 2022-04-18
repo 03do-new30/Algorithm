@@ -1,6 +1,5 @@
 # 출처: https://peisea0830.tistory.com/3
 import sys
-from unittest import result
 input = sys.stdin.readline
 
 N, M, B = map(int, input().split())
