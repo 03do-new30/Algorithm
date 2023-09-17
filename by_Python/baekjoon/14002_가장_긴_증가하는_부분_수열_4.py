@@ -6,6 +6,7 @@ A = [0] + list(map(int, input().split()))
 
 # dp[i] = 길이가 i인 증가하눈 부분 수열에서 마지막 숫자가 될 수 있는 최소값
 # seq[i] = 길이가 i인 증가하는 부분 수열
+dp = [0]
 seq = [[]]
 for i in range(1, N+1):
     """
