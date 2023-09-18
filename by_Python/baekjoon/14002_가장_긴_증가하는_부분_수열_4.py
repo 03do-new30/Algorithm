@@ -1,34 +1,26 @@
 import sys
 input = sys.stdin.readline
 
-N = int(input().strip())
-A = [0] + list(map(int, input().split()))
+n = int(input())
+a = [0] + list(map(int, input().split()))
 
-# dp[i] = 길이가 i인 증가하눈 부분 수열에서 마지막 숫자가 될 수 있는 최소값
-# seq[i] = 길이가 i인 증가하는 부분 수열
-dp = [0]
-seq = [[]]
-for i in range(1, N+1):
-    """
-    print("i:", i)
-    print("dp:", dp)
-    print("sq:", seq)
-    """
-    if dp[-1] < A[i]:
-        dp.append(A[i])
-        seq.append(seq[-1] + [A[i]])
-    else:
-        if A[i] in dp:
-            continue
-        for j in range(1, len(dp)):
-            # 처음으로 A[i] < dp[j]가 되는 곳에서 dp[j] = A[i]로 업데이트
-            if A[i] < dp[j]:
-                dp[j] = A[i]
-                seq[j] = seq[j-1] + [A[i]]
-                break
+# dp[i] = a[i]가 마지막 수일 때 LIS의 길이
+# seq[i] = a[i]가 마지막 수일 때, 그때까지의 LIS 수열 기록
+dp = [0] * (n+1)
+seq = [[] for _ in range(n+1)]
 
-print(len(dp) - 1)
-result = ""
-for x in seq[-1]:
-    result += str(x) + " "
-print(result.strip())
+for i in range(1, n+1):
+    for j in range(i):
+        if a[j] < a[i] and dp[j] + 1 > dp[i]:
+            dp[i] = dp[j] + 1
+            seq[i] = seq[j] + [a[i]]
+
+ans_len = 0
+ans_seq = []
+for i in range(1, n+1):
+    if dp[i] > ans_len:
+        ans_len = dp[i]
+        ans_seq = seq[i]
+
+print(ans_len)
+print(' '.join(map(str, ans_seq)))
