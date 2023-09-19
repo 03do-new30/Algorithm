@@ -3,21 +3,20 @@ input = sys.stdin.readline
 
 N, K = map(int, input().split())
 
-# dp[k][n] -> k개를 더해서 합이 n
-# dp[k][n] = dp[k-1][n] + dp[k][n-1]
-dp = [[0]*(N+1) for _ in range(K+1)]
-# dp[x][0] = 1로 초기화
-# dp[1][X] = 1로 초기화
-for i in range(1, K+1):
-    dp[i][0] = 1
-for i in range(1, N+1):
-    dp[1][i] = 1
+# dp[k][n] = 정수 k개를 더해서 합이 n이 되는 경우의 수
+dp = [[0] * (N+1) for _ in range(K+1)]
 
-
+mod = 1000000000
 for k in range(1, K+1):
-    for n in range(1, N+1):
-        if dp[k][n] == 1:
-            continue  # skip
-        dp[k][n] = (dp[k-1][n] + dp[k][n-1]) % 1000000000
+    for n in range(N+1):
+        if k == 1:
+            dp[k][n] = 1
+            continue
+        if n == 0:
+            dp[k][n] = 1
+            continue
+        for i in range(n+1):
+            dp[k][n] += dp[k-1][n-i]
+            dp[k][n] %= mod
 
 print(dp[K][N])
