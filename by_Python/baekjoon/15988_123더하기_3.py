@@ -1,13 +1,22 @@
 import sys
 input = sys.stdin.readline
 
-dp = [0]*1000001
-dp[0] = 1
-dp[1] = 1
-dp[2] = 2
-for i in range(3, 1000001):
-    dp[i] = (dp[i-1] + dp[i-2] + dp[i-3]) % 1000000009
+t = int(input())
+cases = [int(input()) for _ in range(t)]
+max_case = max(cases)
 
-for _ in range(int(input())):
-    n = int(input())
-    print(dp[n])
+dp = [0] * (max_case + 1)
+mod = 1000000009
+
+dp[0] = 1
+for i in range(1, max_case + 1):
+    if i - 1 >= 0:
+        dp[i] += dp[i-1]
+    if i - 2 >= 0:
+        dp[i] += dp[i-2]
+    if i - 3 >= 0:
+        dp[i] += dp[i-3]
+    dp[i] %= mod
+
+for case in cases:
+    print(dp[case])
