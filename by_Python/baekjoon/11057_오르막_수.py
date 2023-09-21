@@ -2,22 +2,18 @@ import sys
 input = sys.stdin.readline
 
 n = int(input().strip())
+mod = 10007
 
-# dp[i][j] = 수의 길이가 j일 때, 마지막 숫자가 i(0<=i<10)인 오르막 숫자의 개수
-dp = [[0] * (n+1) for _ in range(10)]
+#dp[i][j] = i번째 자리에 수j가 올 때, 가능한 경우의 수
+dp = [[0] * 10 for _ in range(n+1)]
 
-for j in range(1, n+1):
-    for i in range(10):
-        # base case
-        if j == 1:
-            dp[i][1] = 1
-
+for i in range(1, n+1):
+    for j in range(10):
+        if i == 1:
+            dp[i][j] = 1
+        elif j == 0:
+            dp[i][j] = 1
         else:
-            for x in range(0, i+1):
-                dp[i][j] += dp[x][j-1]
+            dp[i][j] = (dp[i][j-1] + dp[i-1][j]) % mod
 
-# n열의 합을 출력한다
-result = 0
-for row in dp:
-    result += row[n]
-print(result % 10007)
+print(sum(dp[n]) % mod)
