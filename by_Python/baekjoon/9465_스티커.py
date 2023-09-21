@@ -9,15 +9,16 @@ for _ in range(t):
     score.append([0] + list(map(int, input().split())))
     score.append([0] + list(map(int, input().split())))
 
-    # dp 배열
-    dp = [[0] * (n+1) for __ in range(3)]
-
-    for c in range(1, n+1):
-        for r in range(1, 3):
-            if r == 1:
-                dp[1][c] = max(dp[2][c-1] + score[1][c], dp[1][c-1])
-            else:  # r == 2
-                dp[2][c] = max(dp[1][c-1] + score[2][c], dp[2][c-1])
-
-    # 최대 점수 출력
+    dp = [[0] * (n+1) for _ in range(3)]
+    for i in range(1, n+1):
+        if i -2 >= 0:
+            dp[1][i] = max(dp[1][i-2], dp[2][i-2])
+            dp[2][i] = max(dp[1][i-2], dp[2][i-2])
+        if i - 1 >= 0:
+            dp[1][i] = max(dp[1][i], dp[2][i-1])
+            dp[2][i] = max(dp[2][i], dp[1][i-1])
+        dp[1][i] += score[1][i]
+        dp[2][i] += score[2][i]
+        
+    
     print(max(map(max, dp)))
