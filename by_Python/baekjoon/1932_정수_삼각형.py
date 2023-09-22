@@ -1,21 +1,23 @@
 import sys
 input = sys.stdin.readline
 
-n = int(input().strip())
-dp = [[0]]
-for _ in range(n):
-    dp.append([0] + list(map(int, input().split())))
+n = int(input())
+
+### 1 ###
+# 삼각형 저장
+arr = [[0] * (n+1) for _ in range(n+1)]
 
 for i in range(1, n+1):
+    nums = [0] + list(map(int, input().split()))
     for j in range(1, i+1):
-        if i == 1:
-            continue
-        else:
-            if j == i:
-                dp[i][j] += dp[i-1][j-1]
-            elif j == 1:
-                dp[i][j] += dp[i-1][1]
-            else:
-                dp[i][j] += max(dp[i-1][j-1], dp[i-1][j])
+        arr[i][j] = nums[j]
 
-print(max(map(max, dp)))
+### 2 ###
+# dp[i][j] = arr[i][j] 위치를 더할 때, 최대값
+# dp[i][j] = max(dp[i-1][j-1], dp[i-1][j]) + arr[i][j]
+dp = [[0] * (n+1) for _ in range(n+1)]
+for i in range(1, n+1):
+    for j in range(1, i+1):
+        dp[i][j] = max(dp[i-1][j-1], dp[i-1][j]) + arr[i][j]
+
+print(max(dp[n]))
