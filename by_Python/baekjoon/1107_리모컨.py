@@ -4,9 +4,9 @@ input = sys.stdin.readline
 n = int(input())
 m = int(input())
 
+btns = [] # 고장나지 않은 버튼 저장
 if m > 0:
     broken = list(map(int, input().split()))
-    btns = [] # 고장나지 않은 버튼 저장
     for i in range(10):
         if i not in broken:
             btns.append(i)
@@ -27,45 +27,22 @@ if ans == 0:
     exit()
 
 ### 2 ###
-# 고장나지 않은 버튼으로 주어진 채널 자릿수 숫자를 만들 수 있는 모든 경우
-# 최대 6자리까지 존재할 수 있음
-# 최대 10^6회의 연산이므로 2초 안에 실행 가능함
-for a in btns:
-    tmp_a = str(a)
-    ans = min(ans, 1 + abs(n - int(tmp_a)))
-    # 1 + abs(n - int(tmp_a)) = 숫자버튼 누른 횟수 + n이 되기 위해 (+), (-) 조정 횟수
+# 입력한 채널에 고장난 번호가 포함되어 있는지 체크
+def is_valid(channel):
+    channel = str(channel)
+    for number in channel:
+        if int(number) not in btns:
+            return False
+    return True
 
-    if tmp_a == str(n):
-        break
-
-    for b in btns:
-        tmp_b = tmp_a + str(b)
-        ans = min(ans, 2 + abs(n - int(tmp_b)))
-        if tmp_b == str(n):
-            break
-
-        for c in btns:
-            tmp_c = tmp_b + str(c)
-            ans = min(ans, 3 + abs(n - int(tmp_c)))
-            if tmp_c == str(n):
-                break
-
-            for d in btns:
-                tmp_d = tmp_c + str(d)
-                ans = min(ans, 4 + abs(n - int(tmp_d)))
-                if tmp_d == str(n):
-                    break
-
-                for e in btns:
-                    tmp_e = tmp_d + str(e)
-                    ans = min(ans, 5 + abs(n - int(tmp_e)))
-                    if tmp_e == str(n):
-                        break
-
-                    for f in btns:
-                        tmp_f = tmp_e + str(f)
-                        ans = min(ans, 6 + abs(n - int(tmp_f)))
-                        if tmp_f == str(n):
-                            break
+### 3 ###
+# 채널을 입력하는 경우
+for i in range(1000001):
+    # 고장난 버튼이 포함되어 있으면 안됨
+    if is_valid(i):
+        # 버튼으로 입력한 채널에서 (+) 혹은 (-)로 이동하는 입력 횟수
+        tmp_ans = len(str(i)) + abs(i - n)
+        # 작은 값을 저장
+        ans = min(ans, tmp_ans)
 
 print(ans)
