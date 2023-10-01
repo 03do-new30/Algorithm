@@ -1,20 +1,71 @@
-# 출처: https://velog.io/@jajubal/%ED%8C%8C%EC%9D%B4%EC%8D%AC%EB%B0%B1%EC%A4%80-1107-%EB%A6%AC%EB%AA%A8%EC%BB%A8
-target = int(input())
-ans = abs(100 - target) # ++ or -- 로 이동할 경우 -> 최댓값
-M = int(input())
-if M: # 고장난게 있을 경우만 인풋을 받음
-    broken = set(input().split())
-else:
-    broken = set()
+import sys
+input = sys.stdin.readline
 
-# 작은수에서 큰수로 이동할땐 500,000 까지만 보면 되지만
-# 반대로 큰수에서 작은수로 내려올수도 있으므로 1,000,000 까지 봐야함
-for num in range(1000001): 
-    for N in str(num):
-        if N in broken: # 해당 숫자가 번호를 눌러서 만들 수 없는 경우엔 스탑
+n = int(input())
+m = int(input())
+
+if m > 0:
+    broken = list(map(int, input().split()))
+    btns = [] # 고장나지 않은 버튼 저장
+    for i in range(10):
+        if i not in broken:
+            btns.append(i)
+else:
+    btns = [i for i in range(10)]
+
+chnl = 100
+cnt = 0
+ans = 0
+
+### 1 ###
+# (+), (-)만으로 이동하는 경우 입력 횟수
+plus_minus = abs(n - chnl)
+ans = plus_minus
+
+if ans == 0:
+    print(ans)
+    exit()
+
+### 2 ###
+# 고장나지 않은 버튼으로 주어진 채널 자릿수 숫자를 만들 수 있는 모든 경우
+# 최대 6자리까지 존재할 수 있음
+# 최대 10^6회의 연산이므로 2초 안에 실행 가능함
+for a in btns:
+    tmp_a = str(a)
+    ans = min(ans, 1 + abs(n - int(tmp_a)))
+    # 1 + abs(n - int(tmp_a)) = 숫자버튼 누른 횟수 + n이 되기 위해 (+), (-) 조정 횟수
+
+    if tmp_a == str(n):
+        break
+
+    for b in btns:
+        tmp_b = tmp_a + str(b)
+        ans = min(ans, 2 + abs(n - int(tmp_b)))
+        if tmp_b == str(n):
             break
-    else: # 번호를 눌러서 만들 수 있는 경우엔
-    	# min(기존답, 번호를 누른 횟수 + 해당 번호로부터 타겟까지의 차이)
-        ans = min(ans, len(str(num)) + abs(num - target))
+
+        for c in btns:
+            tmp_c = tmp_b + str(c)
+            ans = min(ans, 3 + abs(n - int(tmp_c)))
+            if tmp_c == str(n):
+                break
+
+            for d in btns:
+                tmp_d = tmp_c + str(d)
+                ans = min(ans, 4 + abs(n - int(tmp_d)))
+                if tmp_d == str(n):
+                    break
+
+                for e in btns:
+                    tmp_e = tmp_d + str(e)
+                    ans = min(ans, 5 + abs(n - int(tmp_e)))
+                    if tmp_e == str(n):
+                        break
+
+                    for f in btns:
+                        tmp_f = tmp_e + str(f)
+                        ans = min(ans, 6 + abs(n - int(tmp_f)))
+                        if tmp_f == str(n):
+                            break
 
 print(ans)
