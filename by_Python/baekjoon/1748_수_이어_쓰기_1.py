@@ -11,14 +11,14 @@ n = int(input())
 # 100,000,000 -> 아홉자리 (1가지 숫자)
 
 ans = 0
-length = len(str(n))
-for i in range(1, length + 1):
-    if i == length:
-        ans += (n - 10**(i-1) + 1) * length
-        break
+start = 1
+length = 1
 
-    ans += i * (10 ** i - 10 ** (i-1))
-
-    # print("i:", i, "ans:", ans)
-
+while start <= n:
+    end = start * 10 - 1
+    if end > n:
+        end = n
+    ans += (end - start + 1) * length
+    start *= 10
+    length += 1
 print(ans)
