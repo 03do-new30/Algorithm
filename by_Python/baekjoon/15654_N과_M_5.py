@@ -1,12 +1,25 @@
-from itertools import permutations
 import sys
 input = sys.stdin.readline
 
+n, m = map(int, input().split())
+nums = sorted(list(map(int, input().split())))
+
+seq = [-1] * m
+visited = [False] * n
 
 
-N, M = map(int, input().split())
-nums = map(int, input().split())
-combis = sorted(list(set((permutations(nums, M)))))
+def solve(idx):
+    if idx == m:
+        print(' '.join(list(map(str, seq))))
+        return
 
-for combi in combis:
-    print(' '.join(map(str, combi)))
+    for i in range(n):
+        if visited[i]:
+            continue
+        visited[i] = True
+        seq[idx] = nums[i]
+        solve(idx + 1)
+        visited[i] = False
+
+
+solve(0)
