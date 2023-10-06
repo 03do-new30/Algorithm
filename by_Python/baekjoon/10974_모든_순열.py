@@ -28,3 +28,4 @@ while True:
     if not next_permutation(seq):
         break
 
+
