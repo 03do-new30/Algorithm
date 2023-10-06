@@ -1,21 +1,30 @@
 import sys
 input = sys.stdin.readline
 
-n = int(input())
-
-seq = [0] * n
-visited = [False] * (n+1)
-def solve(idx):
-    if idx == n:
-        print(' '.join(list(map(str, seq))))
-        return
+def next_permutation(seq):
+    i = len(seq) - 1
+    while i > 0 and seq[i-1] >= seq[i]:
+        i -= 1
+    if i == 0:
+        return False
     
-    for i in range(1, n+1):
-        if visited[i]:
-            continue
-        visited[i] = True
-        seq[idx] = i
-        solve(idx + 1)
-        visited[i] = False
+    j = len(seq) - 1
+    while seq[i-1] >= seq[j]:
+        j -= 1
+    seq[i-1], seq[j] = seq[j], seq[i-1]
 
-solve(0)
+    j = len(seq) - 1
+    while i < j:
+        seq[i], seq[j] = seq[j], seq[i]
+        i += 1
+        j -= 1
+    return True
+
+n = int(input())
+seq = [x for x in range(1, n+1)]
+
+while True:
+    print(' '.join(list(map(str, seq))))
+    if not next_permutation(seq):
+        break
+
