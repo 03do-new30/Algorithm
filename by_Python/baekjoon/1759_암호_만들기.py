@@ -18,40 +18,19 @@ def is_password(a):
         return True
     return False
 
-# 다음 순열
-def next_permutation(a):
-    i = len(a) - 1
-    while i > 0 and a[i-1] >= a[i]:
-        i -= 1
-    if i == 0:
-        return False
+# 재귀로 풀어보기
+def solve(idx, password):
+    if len(password) == ll:
+        if is_password(password):
+            print(password)
+        return
     
-    j = len(a) - 1
-    while a[i-1] >= a[j]:
-        j -= 1
-    a[i-1], a[j] = a[j], a[i-1]
+    if idx >= c:
+        return
+    
+    # idx번째 알파벳을 암호에 포함
+    solve(idx + 1, password + letters[idx])
+    # idx번째 알파벳을 암호에 미포함
+    solve(idx + 1, password)
 
-    j = len(a) - 1
-    while i < j:
-        a[i], a[j] = a[j], a[i]
-        i += 1
-        j -= 1
-    return True
-
-
-# 6603 로또 문제와 비슷하게 풀어보기
-seq = [0] * (c - ll) + [1] * ll
-permutations = []
-while True:
-    permutations.append(seq[:])
-    if not next_permutation(seq):
-        break
-
-permutations.sort(reverse=True)
-for permutation in permutations:
-    password = []
-    for i in range(c):
-        if permutation[i] == 1:
-            password.append(letters[i])
-    if is_password(password):
-        print(''.join(password))
+solve(0, "")
