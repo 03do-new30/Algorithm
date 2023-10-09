@@ -17,7 +17,7 @@ def solve(day, sum):
         answers.append(sum)
         return
 
-    if day > n:
+    if day > n + 1:
         return
     
     solve(day + t[day], sum + p[day])
