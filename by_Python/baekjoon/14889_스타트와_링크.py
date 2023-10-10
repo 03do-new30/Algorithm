@@ -4,6 +4,7 @@ input = sys.stdin.readline
 n = int(input())
 arr = [list(map(int, input().split())) for _ in range(n)]
 
+# 0과 1로 바꾸면 비트마스크로도 해결 가능하다
 # idx번째 사람을 어떤 팀에 넣을지 결정한다
 def solve(idx, team_a, team_b):
     if idx == n:
