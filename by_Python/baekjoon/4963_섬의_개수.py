@@ -2,40 +2,37 @@ import sys
 from collections import deque
 input = sys.stdin.readline
 
+dirs = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
 
-def island(row, col, arr):
+def bfs(r, c):
     q = deque([])
-    q.append((row, col))
-    arr[row][col] = -1  # if visited -> -1
-
-    moves = [[-1, 0], [1, 0], [0, -1], [0, 1],
-             [-1, -1], [-1, 1], [1, 1], [1, -1]]
+    q.append((r, c))
+    visited[r][c] = True
 
     while q:
         r, c = q.popleft()
-        for move in moves:
-            new_r = r + move[0]
-            new_c = c + move[1]
+        for dir in dirs:
+            dir_r, dir_c = dir
+            new_r = r + dir_r
+            new_c = c + dir_c
             if 0 <= new_r < h and 0 <= new_c < w:
-                if arr[new_r][new_c] == 1:
+                if not visited[new_r][new_c] and arr[new_r][new_c] == 1:
+                    visited[new_r][new_c] = True
                     q.append((new_r, new_c))
-                    arr[new_r][new_c] = -1
-
 
 while True:
     w, h = map(int, input().split())
     if w == 0 and h == 0:
         break
 
-    arr = []
-    for _ in range(h):
-        arr.append(list(map(int, input().split())))
+    arr = [list(map(int, input().split())) for _ in range(h)]
+    visited = [[False] * w for _ in range(h)]
 
     count = 0
     for r in range(h):
         for c in range(w):
-            if arr[r][c] == 1:
-                island(r, c, arr)
+            if not visited[r][c] and arr[r][c] == 1:
                 count += 1
-
+                bfs(r, c)
+    
     print(count)
