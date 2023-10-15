@@ -14,43 +14,38 @@ for _ in range(n-1):
 order = list(map(int, input().split()))
 order = [x-1 for x in order]
 
-visited = [False] * n
-parent = [-1] * n
-q = deque()
-
-# 시작점
-q.append(0)
-visited[0] = True
-total = 1
+# 입력으로 주어진 순서를 이용해 인접 리스트를 정렬한 뒤
+# BFS를 실행
+rank = [0] * n
 
 for i in range(n):
-    if not q:
-        print(0)
-        exit()
-    
+    rank[order[i]] = i
+
+# 인접리스트 정렬
+for i in range(n):
+    a[i].sort(key = lambda x : rank[x])
+
+bfs_result = []
+q = deque()
+visited = [False] * n
+
+q.append(0)
+visited[0] = True
+
+while q:
     x = q.popleft()
-    if x != order[i]:
-        print(0)
-        exit()
-    
-    x_possible_nodes = 0
+    bfs_result.append(x)
     for y in a[x]:
         if not visited[y]:
-            parent[y] = x
-            x_possible_nodes += 1
-    
-    for j in range(x_possible_nodes):
-        if total + j >= n:
-            print(0)
-            exit()
-        
-        if parent[order[total + j]] != x:
-            print(0)
-            exit()
-        
-        q.append(order[total + j])
-        visited[order[total + j]] = True
-    
-    total += x_possible_nodes
+            q.append(y)
+            visited[y] = True
 
-print(1)
+success = True
+for i in range(n):
+    if bfs_result[i] == order[i]:
+        continue
+    else:
+        success = False
+        break
+
+print(1 if success else 0)
