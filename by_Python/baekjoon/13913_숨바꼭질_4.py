@@ -1,52 +1,43 @@
 import sys
-from collections import deque
 input = sys.stdin.readline
+from collections import deque
 
-N, K = map(int, input().split())
+n, k = map(int, input().split())
+max = 100001
+visited = [-1] * max # -1이면 미방문, 아니면 시간 저장
+parent = [-1] * max # 어떤 노드에서부터 도착했는지를 저장
 
-# time[x] = x까지오는데 걸린 시간 저장
-# prev[x] = x에 오기 전 y 저장
-def bfs():
-    q = deque([N])
-    time = [-1]*100001
-    prev = [-1]*100001
-    time[N] = 0
-    prev[N] = None # 시작하는 N은 None으로 저장한다
+# bfs
+q = deque([n])
+visited[n] = 0
+parent[n] = -1
 
-    while q:
-        x = q.popleft()
-        # 도달
-        if x == K:
-            print(time[x])
-            path = find_path(x, prev)
-            print(' '.join(map(str, path)))
-            return
+while q:
+    n = q.popleft()
+    if 0 <= n - 1 and visited[n-1] == -1:
+        visited[n-1] = visited[n] + 1
+        q.append(n-1)
+        parent[n-1] = n
+    if n + 1 < max and visited[n+1] == -1:
+        visited[n+1] = visited[n] + 1
+        q.append(n+1)
+        parent[n+1] = n
+    if n * 2 < max and visited[n*2] == -1:
+        visited[n*2] = visited[n] + 1
+        q.append(n*2)
+        parent[n*2] = n
 
-        # X-1
-        if 0 <= x-1 and time[x-1] == -1:
-            time[x-1] = time[x] + 1
-            prev[x-1] = x
-            q.append(x-1)
-        # X+1
-        if x + 1 <= 100000 and time[x+1] == -1:
-            time[x+1] = time[x] + 1
-            prev[x+1] = x
-            q.append(x+1)
-        # 2*X
-        if x*2 <= 100000 and time[x*2] == -1:
-            time[x*2] = time[x] + 1
-            prev[x*2] = x
-            q.append(x*2)
+print(visited[k])
+# 경로 만들기
+node = k
+path = []
+while True:
+    if parent[node] == -1:
+        path.append(node)
+        break
 
-def find_path(x, prev):
-    # x까지 도달하는 데 거쳐온 위치들을 구한다
-    path = []
-    while True:
-        if x is None:
-            return reversed(path)
-        path.append(x)
-        x = prev[x]
+    path.append(node)
+    node = parent[node]
 
-
-# 함수 실행
-bfs()
+path.reverse()
+print(' '.join(list(map(str, path))))
