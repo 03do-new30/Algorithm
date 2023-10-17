@@ -1,41 +1,45 @@
 import sys
-sys.setrecursionlimit(10**9)
 input = sys.stdin.readline
+from collections import deque
 
-
-n = int(input().strip())
-graph = [[] for _ in range(n+1)]
-
-
-def dfs(u, wt):
-    for x in graph[u]:
-        v = x[0]
-        v_wt = x[1]
-
-        if dist[v] == -1:
-            dist[v] = wt + v_wt
-            dfs(v, dist[v])
-
+n = int(input())
+# 양방향 그래프 인접리스트로 저장
+a = [[] for _ in range(n+1)]
 
 for _ in range(n-1):
-    u, v, wt = map(int, input().split())
-    graph[u].append((v, wt))
-    graph[v].append((u, wt))
+    parent, child, weight = map(int, input().split())
+    a[parent].append((child, weight))
+    a[child].append((parent, weight))
 
-# 임의의 노드에서 가장 먼 곳 x를 찾고,
-# 그 x에서 가장 먼 곳 y를 찾는다.
-# x - y의 거리가 트리의 지름이 된다.
-dist = [-1]*(n+1)
+# bfs
+def bfs(start):
+    q = deque()
+    visited = [False] * (n+1)
+    dist = [0] * (n+1) #dist[i] = start - i까지의 거리
+    q.append(start)
+    visited[start] = True
 
-# 노드 1에서 가장 먼 노드를 찾는다
-dist[1] = 0
-dfs(1, 0)
+    while q:
+        current = q.popleft()
+        for next, weight in a[current]:
+            if not visited[next]:
+                dist[next] = dist[current] + weight
+                visited[next] = True
+                q.append(next)
+    return dist
 
-# 노드 1에서 가장 먼 노드 furthest에서 가장 먼 노드를 찾는다
-furthest = dist.index(max(dist))
-dist = [-1]*(n+1)
-dist[furthest] = 0
-dfs(furthest, 0)
+# 루트에서 가장 먼 노드 x를 구한다
+x = 0
+tmp = 0
+dist_from_root = bfs(1)
+for i in range(1, n+1):
+    if dist_from_root[i] > tmp:
+        tmp = dist_from_root[i]
+        x = i
+# x에서 가장 먼 노드까지의 거리를 구한다 -> 트리의 지름
+max_dist = 0
+dist_from_x = bfs(x)
+for i in range(1, n+1):
+    max_dist = max(max_dist, dist_from_x[i])
 
-# 출력
-print(max(dist))
+print(max_dist)

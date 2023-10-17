@@ -1,53 +1,50 @@
-# 1967_트리의 지름과 유사
 import sys
-import heapq
 input = sys.stdin.readline
+from collections import deque
 
-V = int(input().strip())
-graph = [[] for _ in range(V+1)]
-
-for _ in range(V):
-    info = list(map(int, input().split()))
-
-    # 정점 번호
-    u = info[0]
-
+v = int(input())
+a = [[] for _ in range(v+1)]
+for _ in range(v):
+    infos = list(map(int, input().split()))
+    n = infos[0]
     idx = 1
-    while info[idx] != -1:
-        v = info[idx]
-        wt = info[idx+1]
-        # graph
-        graph[u].append((v, wt))
-        # update
+    while infos[idx] != -1:
+        u = infos[idx]
+        dist = infos[idx + 1]
+        a[n].append((u, dist))
         idx += 2
 
-
-def dfs(start, dist):
-    if visited[start]:
-        return
-
-    # heapq에 (-거리, 정점) 으로 삽입
-    heapq.heappush(q, (-dist, start))
+# BFS를 이용하여 트리의 지름 구하기
+def bfs(start):
+    q = deque()
+    q.append(start)
+    visited = [False] * (v + 1)
     visited[start] = True
+    dist = [0] * (v + 1) # dist[i] = start에서 i까지의 거리 저장
 
-    for x in graph[start]:
-        node, weight = x
-        dfs(node, dist + weight)
+    while q:
+        node = q.popleft()
+        for next, next_dist in a[node]:
+            if not visited[next]:
+                visited[next] = True
+                dist[next] = dist[node] + next_dist
+                q.append(next)
+    return dist
 
+# 임의의 정점, 문제에서 항상 존재하는 1에서 가장 먼 정점 x를 찾는다
+dist_from_1 = bfs(1)
+max_dist = 0
+x= 0
+for i in range(1, v+1):
+    if max_dist < dist_from_1[i]:
+        max_dist = dist_from_1[i]
+        x = i
 
-# min heap을 max heap처럼 사용하기 위해서, heapq에 (-거리, 정점) 으로 삽입한다
-q = []
-visited = [False]*(V+1)
-# 임의의 정점에서 가장 먼 정점을 고른다
-# 정점 1에서 가장 먼 정점을 고른다
-dfs(1, 0)
-max_dist_node = heapq.heappop(q)[1]
-
-# 임의의 정점에서 가장 먼 정점 max_dist_node에서
-# 가장 먼 정점까지의 거리가 트리의 지름이다
-q = []
-visited = [False]*(V+1)
-dfs(max_dist_node, 0)
-max_dist = -heapq.heappop(q)[0]  # 음수로 바꿔둔 것 해제
+# x에서 가장 먼 정점까지의 거리를 찾는다
+final_dist = bfs(x)
+max_dist = 0
+for i in range(1, v+1):
+    if max_dist < final_dist[i]:
+        max_dist = final_dist[i]
 
 print(max_dist)
