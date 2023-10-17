@@ -1,48 +1,32 @@
 import sys
-from collections import deque
-sys.setrecursionlimit(10**9)  # for dfs
 input = sys.stdin.readline
+from collections import deque
 
-n = int(input().strip())
-
-# 노드의 개수가 1000,000개까지 주어질 수 있으므로
-# 인접 행렬이 아닌 인접 리스트로 구현한다
-graph = [[] for _ in range(n+1)]
+n = int(input())
+# 인접리스트로 만듦
+a = [[] for _ in range(n+1)]
 for _ in range(n-1):
-    i, j = map(int, input().split())
-    graph[i].append(j)
-    graph[j].append(i)
+    u, v = map(int, input().split())
+    a[u].append(v)
+    a[v].append(u)
 
-# bfs
-
-
-def bfs(start, visited, parent):
-    q = deque([])
+# 루트부터 탐색하면서 각 노드의 부모를 구한다
+parent = [-1] * (n+1)
+def bfs(start):
+    q = deque()
     q.append(start)
+    visited = [False] * (n+1)
     visited[start] = True
 
     while q:
-        v = q.popleft()
-        for w in graph[v]:
-            if not visited[w]:
-                q.append(w)
-                visited[w] = True
-                parent[w] = v
+        u = q.popleft()
+        for v in a[u]:
+            if not visited[v]:
+                parent[v] = u
+                visited[v] = True
+                q.append(v)
 
-# dfs
+bfs(1)
 
-
-def dfs(start, visited, parent):
-    for v in graph[start]:
-        if not visited[v]:
-            visited[v] = True
-            parent[v] = start
-            dfs(v, visited, parent)
-
-
-parent = [0]*(n+1)
-visited = [False]*(n+1)
-bfs(1, visited, parent)
-#dfs(1, visited, parent)
 for i in range(2, n+1):
     print(parent[i])
