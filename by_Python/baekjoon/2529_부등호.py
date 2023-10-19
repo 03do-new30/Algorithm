@@ -5,31 +5,35 @@ k = int(input())
 signs = input().split()
 
 visited = [False] * 10
-answers = []
-def solve(idx, seq):
-    # 성공
-    # print("idx:", idx, "seq:", seq)
-    if idx == k:
-        answers.append(seq)
-        return seq
+def solve(num, sign_idx, memo):
+    if sign_idx == len(signs):
+        # 성공
+        results.append(memo)
+        return
 
-    if signs[idx] == '<':
-        for i in range(10):
-            if seq[idx] < i and not visited[i]:
-                visited[i] = True
-                solve(idx + 1, seq + [i])
-                visited[i] = False
+    sign = signs[sign_idx]
+    if sign == '<':
+        for next in range(num + 1, 10):
+            if not visited[next]:
+                visited[next] = True
+                solve(next, sign_idx + 1, memo + str(next))
+                visited[next] = False
+        
     else:
-        for i in range(10):
-            if seq[idx] > i and not visited[i]:
-                visited[i] = True
-                solve(idx + 1, seq + [i])
-                visited[i] = False
+        for next in range(0, num):
+            if not visited[next]:
+                visited[next] = True
+                solve(next, sign_idx + 1, memo + str(next))
+                visited[next] = False
 
+
+results = []
 for i in range(10):
     visited[i] = True
-    solve(0, [i])
+    solve(i, 0, str(i))
     visited[i] = False
 
-print(''.join(list(map(str, answers[-1]))))
-print(''.join(list(map(str, answers[0]))))
+# 최대 정수
+print(results[-1]) 
+# 최소 정수
+print(results[0])
