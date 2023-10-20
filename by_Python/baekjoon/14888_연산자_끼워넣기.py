@@ -1,42 +1,47 @@
-def solve(x, op, i):
-    global max_ans, min_ans
-    if i == N:
-        min_ans = min(min_ans, x)
-        max_ans = max(max_ans, x)
+import sys
+input = sys.stdin.readline
+
+n = int(input())
+a = list(map(int, input().split()))
+signs = list(map(int, input().split())) # +, -, *, //
+
+min_result = 10000000000
+max_result = -10000000000
+def solve(idx, result):
+
+    global min_result
+    global max_result
+
+    if idx == n-1:
+        min_result = min(min_result, result)
+        max_result = max(max_result, result)
         return
+    
+    for i in range(4):
+        if signs[i] <= 0:
+            continue
+        if i == 0: # +
+            signs[i] -= 1
+            solve(idx + 1, result + a[idx+1])
+            signs[i] += 1
+        elif i == 1: # -
+            signs[i] -= 1
+            solve(idx + 1, result - a[idx+1])
+            signs[i] += 1
+        elif i == 2: # *
+            signs[i] -= 1
+            solve(idx + 1, result * a[idx+1])
+            signs[i] += 1
+        else: # //
+            signs[i] -= 1
+            # 음수를 양수로 나눌 때
+            if result < 0 and a[idx + 1] > 0:
+                tmp = -result // a[idx + 1]
+                solve(idx + 1, -tmp)
+            else:
+                solve(idx + 1, result // a[idx+1])
+            signs[i] += 1
 
-    # +
-    if op[0] > 0:
-        op[0] -= 1
-        solve(x + A[i], op, i+1)
-        op[0] += 1
-    # -
-    if op[1] > 0:
-        op[1] -= 1
-        solve(x - A[i], op, i+1)
-        op[1] += 1
-    # *
-    if op[2] > 0:
-        op[2] -= 1
-        solve(x * A[i], op, i+1)
-        op[2] += 1
-    # /
-    if op[3] > 0:
-        op[3] -= 1
-        if x < 0:
-            result = -(-x // A[i])
-            solve(result, op, i+1)
-        else:
-            solve(x // A[i], op, i+1)
-        op[3] += 1
-
-
-N = int(input())
-A = list(map(int, input().split()))
-# 0: +, 1:-, 2:*, 3:/
-op = list(map(int, input().split()))
-max_ans = -1000000000
-min_ans = 1000000000
-solve(A[0], op, 1)
-print(max_ans)
-print(min_ans)
+solve(0, a[0])
+print(max_result)
+print(min_result)
