@@ -4,40 +4,47 @@ input = sys.stdin.readline
 n = int(input())
 arr = [list(map(int, input().split())) for _ in range(n)]
 
-# 0과 1로 바꾸면 비트마스크로도 해결 가능하다
-# idx번째 사람을 어떤 팀에 넣을지 결정한다
-def solve(idx, team_a, team_b):
-    if idx == n:
-        if len(team_a) != n // 2:
-            return -1
-        if len(team_b) != n // 2:
-            return -1
-        
-        stat_a = 0
-        stat_b = 0
-        
-        for i in range(n // 2 - 1):
-            for j in range(i, n // 2):
-                stat_a += arr[team_a[i]][team_a[j]] + arr[team_a[j]][team_a[i]]
-                stat_b += arr[team_b[i]][team_b[j]] + arr[team_b[j]][team_b[i]]
-        
-        diff = abs(stat_a - stat_b)
-        return diff
-    
-    answer = -1
-    
-    # a팀
-    tmp = solve(idx + 1, team_a + [idx], team_b)
-    if tmp != -1:
-        answer = tmp
-    # b팀
-    tmp = solve(idx + 1, team_a, team_b + [idx])
-    if tmp != -1:
-        if answer != -1:
-            answer = min(answer ,tmp)
-        else:
-            answer = tmp
-    
-    return answer
+# 000111처럼 팀 하나는 0, 팀 하나는 1로 해서 순열 만들기
+seq = [0] * (n//2) + [1] * (n//2)
 
-print(solve(0, [], []))
+def next_permutation(seq):
+    i = len(seq) - 1
+    while i > 0 and seq[i-1] >= seq[i]:
+        i -= 1
+    if i == 0:
+        return False
+    
+    j = len(seq) - 1
+    while seq[i-1] >= seq[j]:
+        j -= 1
+    seq[i-1], seq[j] = seq[j], seq[i-1]
+
+    j = len(seq) - 1
+    while i < j:
+        seq[i], seq[j] = seq[j], seq[i]
+        i += 1
+        j -= 1
+    
+    return True
+
+diff = 100
+while True:
+    team_0 = []
+    team_1 = []
+    for i in range(n):
+        if seq[i] == 0:
+            team_0.append(i)
+        else:
+            team_1.append(i)
+    
+    stat_0 = 0
+    stat_1 = 0
+    for i in range(n//2 -1):
+        for j in range(i+1, n//2):
+            stat_0 += arr[team_0[i]][team_0[j]] + arr[team_0[j]][team_0[i]]
+            stat_1 += arr[team_1[i]][team_1[j]] + arr[team_1[j]][team_1[i]]
+    diff = min(diff, abs(stat_0 - stat_1))
+    if not next_permutation(seq):
+        break
+
+print(diff)
