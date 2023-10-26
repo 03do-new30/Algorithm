@@ -1,41 +1,34 @@
-from copy import deepcopy
 import sys
 input = sys.stdin.readline
 
-r, c = map(int, input().split())
-# 알파벳 대문자 -> 아스키 코드값 - 65로 바꾸어 저장
-board = [list(map(lambda x: ord(x) - 65, list(input().strip())))
-         for _ in range(r)]
+n, m = map(int, input().split())
+arr = []
+for _ in range(n):
+    arr.append(list(input().strip()))
 
-# 상, 하, 좌, 우
-dx = [-1, 1, 0, 0]
-dy = [0, 0, -1, 1]
+dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+check = [False] * 26
 
-# 최대 칸 수를 저장
-max_ans = 0
+def solve(r, c, count):
 
+    no_way = True
+    for x, y in dirs:
+        nr = r + x
+        nc = c + y
+        if 0 <= nr < n and 0 <= nc < m:
+            letter = arr[nr][nc]
+            if check[ord(letter) - 65]:
+                continue
+            no_way = False
+            check[ord(letter) - 65] = True
+            solve(nr, nc, count + 1)
+            check[ord(letter) - 65] = False
+    
+    if no_way:
+        global answer
+        answer = max(answer, count)
 
-def dfs(row, col, ans):
-
-    global max_ans
-    max_ans = max(max_ans, ans)
-
-    for i in range(4):
-        new_row = row + dx[i]
-        new_col = col + dy[i]
-        if 0 <= new_row < r and 0 <= new_col < c:
-            if visited[board[new_row][new_col]] == 0:
-                # 방문 처리
-                visited[board[new_row][new_col]] = 1
-                # dfs 수행
-                dfs(new_row, new_col, ans + 1)
-                # 방문 처리 해제
-                visited[board[new_row][new_col]] = 0
-
-
-visited = [0]*26
-visited[board[0][0]] = 1
-# 첫 칸 (0, 0)에서부터 탐색 시작
-# 첫 칸도 칸 수에 포함되므로 ans = 1로 설정
-dfs(0, 0, 1)
-print(max_ans)
+answer = 0
+check[ord(arr[0][0]) - 65] = True
+solve(0, 0, 1)
+print(answer)
