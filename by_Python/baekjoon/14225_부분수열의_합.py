@@ -4,33 +4,31 @@ input = sys.stdin.readline
 n = int(input())
 s = list(map(int, input().split()))
 
-# 부분수열의 합을 다 구한 뒤, 중복 제거하고 오름차순으로 정렬해본다
-results = set()
-def solve(idx, result):
-    if idx == n:
-        results.add(result)
-        return
+# 비트마스크로 풀이
+# 합 저장
+sums = set()
 
-    if idx > n:
-        return
+for i in range(1, 1 << n):
+    total = 0 # 합 저장
+    # j번째 수가 부분집합 i에 포함되는지 확인한다
+    for j in range(n):
+        if i & (1 << j) > 0:
+            total += s[j]
     
-    # idx번째 수를 고르는 경우
-    solve(idx + 1, result + s[idx])
-    # idx번째 수를 고르지 않는 경우
-    solve(idx + 1, result)
+    sums.add(total)
 
-solve(0, 0)
-results = list(results)
-results.sort()
+# 수열 s의 부분 수열의 합으로 나올 수 없는 가장 작은 자연수를 구한다
+sums = sorted(list(sums))
 
-idx = 0
-for number in range(2000001):
-    if idx >= len(results):
-        print(number)
+found = False
+target = 1
+for num in sums:
+    if num == target:
+        target += 1
+    else:
+        print(target)
+        found = True
         break
 
-    if results[idx] != number:
-        print(number)
-        break
-    
-    idx += 1
+if not found:
+    print(target)
