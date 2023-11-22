@@ -1,74 +1,75 @@
 import sys
 from collections import deque
-from itertools import combinations
 input = sys.stdin.readline
 
 n, m = map(int, input().split())
-lab = []
-for _ in range(n):
-    lab.append(list(map(int, input().split())))
+arr = [list(map(int, input().split())) for _ in range(n)]
 
-"""
-참고: https://mentha2.tistory.com/24
-"""
+def solve(a):
+    virus = find_virus(a)
+    bfs(a, virus)
+    safety_zone = find_safety_zone(a)
+    return safety_zone
 
-
-def bfs(row, col, arr):
-    # lab[row][col] == 2
-    queue = deque([])
-    queue.append((row, col))
-
-    moves = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-
-    while queue:
-        v = queue.popleft()
-        for move in moves:
-            new_row = v[0] + move[0]
-            new_col = v[1] + move[1]
-            if 0 <= new_row < n and 0 <= new_col < m:
-                if arr[new_row][new_col] == 0:  # empty
-                    queue.append((new_row, new_col))
-                    arr[new_row][new_col] = 2  # virus
-
-
-# save safety set
-safety_set = set()
-
-
-def wall(arr):
-    # save empty area
-    empty_list = []
+def find_virus(a):
+    ret = []
     for r in range(n):
         for c in range(m):
-            if lab[r][c] == 0:
-                empty_list.append((r, c))
+            if a[r][c] == 2:
+                ret.append((r, c))
+    return ret
 
-    # make combinations of empty area = possible walls
-    wall_combinations = list(combinations(empty_list, 3))
+def find_safety_zone(a):
+    ret = 0
+    for r in range(n):
+        for c in range(m):
+            if a[r][c] == 0:
+                ret += 1
+    return ret
 
-    # build wall for each combination
-    for combi in wall_combinations:
-        new_arr = [arr_row[:] for arr_row in arr]
-        new_arr[combi[0][0]][combi[0][1]] = 1  # wall
-        new_arr[combi[1][0]][combi[1][1]] = 1  # wall
-        new_arr[combi[2][0]][combi[2][1]] = 1  # wall
+def bfs(a, virus):
+    q = deque(virus)
 
-        # bfs
-        for r in range(n):
-            for c in range(m):
-                if new_arr[r][c] == 2:
-                    bfs(r, c, new_arr)
-
-        # update max_safety
-        safety_set.add(safety_area(new_arr))
-
-
-def safety_area(arr):
-    result = 0
-    for row in arr:
-        result += row.count(0)
-    return result
+    dr = [-1, 1, 0, 0]
+    dc = [0, 0, -1, 1]
+    
+    while q:
+        r, c = q.popleft()
+        for i in range(4):
+            nr = r + dr[i]
+            nc = c + dc[i]
+            if 0 <= nr < n and 0 <= nc < m:
+                if a[nr][nc] == 0:
+                    a[nr][nc] = 2
+                    q.append((nr, nc))
 
 
-wall(lab)
-print(max(safety_set))
+answer = 0
+for r1 in range(n):
+    for c1 in range(m):
+        if arr[r1][c1] != 0:
+            continue
+        for r2 in range(n):
+            for c2 in range(m):
+                if arr[r2][c2] != 0:
+                    continue
+                for r3 in range(n):
+                    for c3 in range(m):
+                        if arr[r3][c3] != 0:
+                            continue
+                        
+                        if r1 == r2 and c1 == c2:
+                            continue
+                        if r1 == r3 and c1 == c3:
+                            continue
+                        if r2 == r3 and c2 == c3:
+                            continue
+
+                        arr[r1][c1] = 1; arr[r2][c2] = 1; arr[r3][c3] = 1
+                        # solve
+                        a = [row[:] for row in arr]
+                        tmp = solve(a)
+                        if answer < tmp:
+                            answer = tmp
+                        arr[r1][c1] = 0; arr[r2][c2] = 0;arr[r3][c3] = 0
+print(answer)
