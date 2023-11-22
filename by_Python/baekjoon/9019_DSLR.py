@@ -1,54 +1,47 @@
 import sys
 input = sys.stdin.readline
+from collections import deque
 
-
-def solve(A, B):
-    # (현재 A값, 지금까지 수행한 연산)을 q에 삽입
-    q = deque([(A, "")])
-    visited[A] = True
+def solve(a, b):
+    hist = [None] * 10000
+    hist[a] = ''
+    q = deque([a])
 
     while q:
-        A, dslr = q.popleft()
-
-        if A == B:
-            print(dslr)
-            break
+        n = q.popleft()
 
         # D
-        new_A = A * 2 % 10000
-
-        if not visited[new_A]:
-            visited[new_A] = True
-            q.append((new_A, dslr + "D"))
+        d = (n * 2) % 10000
+        if hist[d] is None:
+            hist[d] = hist[n] + 'D'
+            q.append(d)
 
         # S
-        if A == 0:
-            new_A = 9999
+        if n == 0:
+            s = 9999
         else:
-            new_A = A - 1
-
-        if not visited[new_A]:
-            visited[new_A] = True
-            q.append((new_A, dslr + "S"))
-
+            s = n - 1
+        if hist[s] is None:
+            hist[s] = hist[n] + 'S'
+            q.append(s)
         # L
-        new_A = (A % 1000) * 10 + A // 1000
-        if not visited[new_A]:
-            visited[new_A] = True
-            q.append((new_A, dslr + "L"))
-
+        l = (n % 1000) * 10 + (n // 1000)
+        if hist[l] is None:
+            hist[l] = hist[n] + 'L'
+            q.append(l)
         # R
-        new_A = (A % 10)*1000 + (A//10)
-        if not visited[new_A]:
-            visited[new_A] = True
-            q.append((new_A, dslr + "R"))
+        r = (n % 10) * 1000 + (n // 10)
+        if hist[r] is None:
+            hist[r] = hist[n] + 'R'
+            q.append(r)
+    
+    return hist[b]
+
+t = int(input())
+for _ in range(t):
+    a, b = map(int, input().split())
+    print(solve(a, b))
+    
 
 
-T = int(input().strip())
-for _ in range(T):
-    # 연산 횟수를 줄이기 위해,
-    # A값이 i일 때 DSLR 연산을 시도해보았다면
-    # vsited[i] = True
-    visited = [False]*100000
-    A, B = map(int, input().split())
-    solve(A, B)
+    
