@@ -1,99 +1,69 @@
-from collections import deque
 import sys
+from collections import deque
 input = sys.stdin.readline
 
-R, C = map(int, input().split())
-arr = [list(input().strip()) for _ in range(R)]
+n, m = map(int, input().split())
+arr = [list(input().strip()) for _ in range(n)]
 
-moves = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-
-# 물이 차는 시간을 기록
-water = [[0]*C for _ in range(R)]
-
-
-def water_bfs(row, col, water_visited):
-    q = deque([(row, col)])
-    water_visited[row][col] = True
-    water[row][col] = 0
-    while q:
-        row, col = q.popleft()
-        for move in moves:
-            new_row = row + move[0]
-            new_col = col + move[1]
-
-            if 0 <= new_row < R and 0 <= new_col < C:
-                if not water_visited[new_row][new_col]:
-                    if arr[new_row][new_col] == '.':
-                        # water에 물이 차는 시간 기록이 없을 때
-                        if water[new_row][new_col] == 0:
-                            water[new_row][new_col] = water[row][col] + 1
-                        # water에 물이 차는 시간 기록이 있다면 min값으로 갱신한다
-                        elif water[new_row][new_col] > 0:
-                            water[new_row][new_col] = min(
-                                water[new_row][new_col], water[row][col] + 1)
-                        water_visited[new_row][new_col] = True
-                        q.append((new_row, new_col))
-
-
-# 고슴도치가 움직이는 시간을 기록
-visited = [[0]*C for _ in range(R)]
-
-
-def bfs(row, col):
-    q = deque([(row, col)])
-    visited[row][col] = 0
-
-    while q:
-        row, col = q.popleft()
-        for move in moves:
-            new_row = row + move[0]
-            new_col = col + move[1]
-            if 0 <= new_row < R and 0 <= new_col < C:
-                if not visited[new_row][new_col]:
-                    # 비어 있는 곳인가?
-                    if arr[new_row][new_col] == '.':
-                        # 물이 차지는 않았는가?
-                        # 다음 움직일 곳이 물이 차있지 않아야한다
-                        # 아예 물이 들어와있지 않거나, 물이 들어오기 전에 고슴도치가 지나감
-                        if water[new_row][new_col] == 0 or water[new_row][new_col] > visited[row][col] + 1:
-                            visited[new_row][new_col] = visited[row][col] + 1
-                            q.append((new_row, new_col))
-                    # 비버의 굴인가?
-                    elif arr[new_row][new_col] == 'D':
-                        visited[new_row][new_col] = visited[row][col] + 1
-                        q.append((new_row, new_col))
-
-
-for r in range(R):
-    for c in range(C):
-        if arr[r][c] == '*':
-            tmp_visited = [[False]*C for _ in range(R)]
-            water_bfs(r, c, tmp_visited)
-
-""" water 출력
-for water_row in water:
-    print(water_row)
-"""
-
-for r in range(R):
-    for c in range(C):
+start_r = 0; start_c = 0
+goal_r = 0; goal_c = 0
+waters = []
+for r in range(n):
+    for c in range(m):
         if arr[r][c] == 'S':
-            bfs(r, c)
+            start_r = r; start_c = c
+        elif arr[r][c] == 'D':
+            goal_r = r; goal_c = c
+        elif arr[r][c] == '*':
+            waters.append((r, c))
 
-""" visited 출력
-print('-'*15)
-for visited_row in visited:
-    print(visited_row)
-"""
+def flood(waters):
+    visited = [[-1] * m for _ in range(n)]
+    q = deque(waters)
+    for x, y in q:
+        visited[x][y] = 0
+        # visited[x][y] = t 
+        # (x, y)에 물이 차는 시간은 t초
+    
+    dr = [-1, 1, 0, 0]
+    dc = [0, 0, -1 ,1]
 
-# 비버의 굴로 가는 시간 구하기
-ans = 0
-for r in range(R):
-    for c in range(C):
-        if arr[r][c] == 'D':
-            ans = visited[r][c]
-            break
-if ans == 0:
-    print("KAKTUS")
+    while q:
+        r, c = q.popleft()
+        for i in range(4):
+            nr = r + dr[i]
+            nc = c + dc[i]
+            if 0 <= nr < n and 0 <= nc < m:
+                if arr[nr][nc] == '.' and visited[nr][nc] == -1:
+                    visited[nr][nc] = visited[r][c] + 1
+                    q.append((nr, nc))
+    return visited
+
+water_check = flood(waters) # 위치 (r, c)에 물이 차는 시간을 저장
+
+visited = [[-1] * m for _ in range(n)]
+q = deque([(start_r, start_c)])
+visited[start_r][start_c] = 0
+
+dr = [-1, 1, 0, 0]
+dc = [0, 0, -1, 1]
+
+while q:
+    r, c = q.popleft()
+    time = visited[r][c]
+    next_time = time + 1
+    for i in range(4):
+        nr = r + dr[i]
+        nc = c + dc[i]
+        if 0 <= nr < n and 0 <= nc < m:
+            if arr[nr][nc] in ['D', '.'] and visited[nr][nc] == -1:
+                # 물이 차있지 않거나, 물이 찰 예정이 아니어야 함
+                if water_check[nr][nc] == -1 or next_time < water_check[nr][nc]:
+                    visited[nr][nc] = next_time
+                    q.append((nr, nc))
+
+ans = visited[goal_r][goal_c]
+if ans == -1:
+    print('KAKTUS')
 else:
     print(ans)
