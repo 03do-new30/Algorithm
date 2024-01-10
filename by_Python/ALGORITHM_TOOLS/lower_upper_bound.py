@@ -1,4 +1,5 @@
 arr = [10, 9, 2, 3, 4, 1, 7, 17, 18, 130]
+arr.sort() # 정렬 필수
 n = len(arr)
 
 # lower bound
