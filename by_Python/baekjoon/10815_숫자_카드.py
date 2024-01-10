@@ -1,30 +1,28 @@
 import sys
 input = sys.stdin.readline
 
-def binary_search(li, target):
-    start = 0
-    end = len(li) - 1
-    
-    while start <= end:
-        mid = (start + end) // 2
-        if target == li[mid]:
-            return True
-        
-        if target < li[mid]:
-            end = mid - 1
-        else:
-            start = mid + 1
-    return False
-
-N = int(input())
-cards = sorted(list(map(int, input().split())))
-M = int(input())
+n = int(input())
+arr = list(map(int, input().split()))
+m = int(input())
 nums = list(map(int, input().split()))
+
+def binary_search(target):
+    left = 0
+    right = n-1
+    mid = (left + right) // 2
+
+    while left <= right:
+        mid = (left + right) // 2
+        if target == arr[mid]:
+            return 1
+        elif target < arr[mid]:
+            right = mid - 1
+        elif target > arr[mid]:
+            left = mid + 1
+    return 0
+
+arr.sort()
 answer = []
 for num in nums:
-    if binary_search(cards, num):
-        answer.append('1')
-    else:
-        answer.append('0')
-
-print(' '.join(answer))
+    answer.append(binary_search(num))
+print(' '.join(map(str, answer)))
