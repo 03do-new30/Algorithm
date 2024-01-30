@@ -1,24 +1,26 @@
 import sys
 input = sys.stdin.readline
 
-K, N = map(int, input().split())
-lans = [int(input()) for _ in range(K)]
+k, n = map(int, input().split())
+arr = [int(input()) for _ in range(k)]
 
-# 이분 탐색
-start, end = 1, max(lans)
+# 이분탐색해가면서 자르면 몇개 나오는지 탐색
+left = 1
+right = max(arr) 
+# right -> 랜선 길이의 최대값
 
-while start <= end:
-    mid = (start + end) // 2
-    # mid 길이로 잘랐을 때 나오는 랜선 개수
-    cnt = 0
-    for lan in lans:
-        cnt += lan // mid
-    
-    if cnt < N:
-        # 좀 더 작게 잘라서 개수를 늘려야 한다
-        end = mid - 1
+while left <= right:
+    mid = (left + right) // 2
+    result = 0
+    for lan in arr:
+        result += lan // mid
+    # print("result:", result)
+    if result < n:
+        # 랜선을 더 작게 잘라야 한다
+        right = mid - 1
     else:
-        # 개수가 N보다 많으면 더 크게 잘라도 된다
-        start = mid + 1
+        # 랜선을 더 크게 잘라야 한다
+        left = mid + 1
 
-print(end)
+# print("left:", left, "mid:", mid, "right:", right)
+print(right)
