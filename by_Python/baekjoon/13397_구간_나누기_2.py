@@ -4,7 +4,6 @@ input = sys.stdin.readline
 n, m = map(int, input().split())
 arr = list(map(int, input().split()))
 
-# 구간의 점수를 mid로 만든다고 했을 때, 몇등분 나오는가
 left  = 0
 right = max(arr)
 ans = right
@@ -25,7 +24,7 @@ def go(mid):
     # print("mid:", mid, "ans:", ans)
     return ans # 구간의 개수
 
-# mid보다 큰 구간이 있는지 확인해준다
+# 구간 점수의 최대값을 mid라고 설정한다
 while left <= right:
     mid = (left + right) // 2
     if go(mid) <= m:
