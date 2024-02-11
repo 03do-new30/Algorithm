@@ -43,7 +43,7 @@ answer = 0
 for i in range(m):
     if all_boarded % arr[i] == 0:
         tmp_cnt += 1
-        # 지금 탄 놀이기구까지 해서 tmp_cnt == m이 되는가?
+        # 지금 탄 놀이기구까지 해서 tmp_cnt == n이 되는가?
         if tmp_cnt == n:
             answer = i
             break
