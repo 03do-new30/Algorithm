@@ -53,32 +53,20 @@ def solution(dice):
     # B가 가져가는 주사위 조합의 점수들
     b_scores = get_scores(dice, b_combis)
 
-    # a_scores와 b_scores를 비교하여, 주사위 조합별 a가 이긴 횟수를 저장한다
-    a_wins = []
-    for i in range(len(a_scores)):
+    # a가 b를 이기는 경우가 많은 a의 주사위 조합을 winner에 저장
+    winner = [-1, -1]
+    cnt = 0
+    for idx in range(len(a_scores)):
         a_win = 0
-        print("a_scores[i]:", a_scores[i])
-        print("b_scores[i]:", b_scores[i])
-        print("-" * 30)
-        for j in range(len(a_scores[i])):
-            if a_scores[i][j] > b_scores[i][j]:
-                a_win += 1
-        a_wins.append(a_win)
-    print("a_wins:", a_wins)
-    # a_wins에서 이긴 횟수가 가장 많은 인덱스번째 조합이 a가 승리할 확률이 가장 높은 주사위 조합이다
-    max_wins = max(a_wins)
-    max_idx = 0
-    for i in range(len(a_wins)):
-        if a_wins[i] == max_wins:
-            max_idx = i
-            break
+        for a_idx in range(len(a_scores[0])):
+            for b_idx in range(len(b_scores[0])):
+                if a_scores[idx][a_idx] > b_scores[idx][b_idx]:
+                    a_win += 1
+        if a_win > cnt:
+            winner = [x+1 for x in a_combis[idx]]
+            cnt = a_win
     
-    # A가 골라야 하는 주사위 번호를 오름차순으로 return
-    result = []
-    for x in a_combis[max_idx]:
-        result.append(x + 1)
-    result.sort()
-    return result
+    return winner
     
         
                 
