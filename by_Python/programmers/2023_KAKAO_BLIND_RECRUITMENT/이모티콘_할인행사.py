@@ -1,60 +1,45 @@
-cases = []
-
-def get_cases(m, cnt, case):
-    global cases
-    if m == cnt:
-        cases.append(case)
-        return
-    sales = [10, 20, 30, 40]
-    for i in range(4):
-        get_cases(m, cnt + 1, case + [sales[i]])
+from itertools import product
 
 def solution(users, emoticons):
     n = len(users)
     m = len(emoticons)
-    results = [] # 가입자 수와 수입을 저장하는 리스트
-    # cases: 이모티콘 별 할인율 조합들을 구함
-    # global 변수 cases 사용 전 초기화
-    global cases
-    if len(cases) > 0:
-        cases = []
-    get_cases(m, 0, [])
+    
+    # 이모티콘의 할인율 경우들을 구함
+    cases = product((10, 20, 30, 40), repeat = m)
+    
+    results = []
 
-    # emoticons 가격 높은 것부터 구매하게 정렬
-    emoticons.sort(reverse = True)
+    # 할인율 조합 케이스별로 소비자의 구매 방식을 탐색
     for case in cases:
-        # 현재 케이스의 총 수입
-        money = 0
-        # 현재 케이스의 총 가입자 수
-        members = 0
-        # 유저별로 구매방식 탐색
+        members = 0 # 서비스에 가입한 사람 수
+        income = 0 # 총 수입
         for i in range(n):
-            # 구매 희망 비율, 최대 지불 가격
-            hope_sale, max_spent = users[i]
-            # users[i]가 현재까지 쓴 비용
-            spent = 0
-            # 이모티콘 서비스 가입 여부
-            service = False
+            percent, budget = users[i] # 소비자 i의 구매 결정 할인율, 최대 지불 비용
+            spent = 0 # 소비자 i가 지금까지 지불한 비용
+            join = False # 소비자 i의 서비스 가입 여부
+            
             for j in range(m):
-                if case[j] < hope_sale: # 할인율 검사
+                sale_percent = case[j] # 이모티콘의 할인율
+                if sale_percent < percent:
                     continue
-
-                price = emoticons[j] - emoticons[j] * case[j] * 0.01
-                if spent + price >= max_spent:
-                    service = True # 서비스 가입
+                price = emoticons[j] - emoticons[j] * sale_percent * 0.01 # 이모티콘 구매가
+                spent += price
+                # 최대 지불 비용 이상인지 검사
+                if spent >= budget:
+                    join = True
                     break
-                else:
-                    spent += price
-            if service:
+            
+            if join:
+                # 이모티콘 서비스에 가입
                 members += 1
             else:
-                money += spent
+                income += spent
         
-        results.append([members, money])
+        # 검사한 case의 멤버 수와 총 수입을 results에 저장
+        results.append([members, income])
+    
     results.sort(key = lambda x : (-x[0], -x[1]))
     return results[0]
-
-
 
 users = [
     [[40, 10000], [25, 10000]],
