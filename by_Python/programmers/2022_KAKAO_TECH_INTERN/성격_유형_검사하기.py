@@ -1,52 +1,33 @@
 def solution(survey, choices):
-    metric_rt = {'R':0, 'T':0}
-    metric_cf = {'C':0, 'F':0}
-    metric_jm = {'J':0, 'M':0}
-    metric_an = {'A':0, 'N':0}
-    metrics = [metric_rt, metric_cf, metric_jm, metric_an]
+    scores = {"R":0, "T":0, "C":0, "F":0, "J":0, "M":0, "A":0, "N":0}
 
-    n = len(survey)
-    for i in range(n):
-        type_idx = 0
-        if 'R' in survey[i]:
-            type_idx = 0
-        elif 'C' in survey[i]:
-            type_idx = 1
-        elif 'J' in survey[i]:
-            type_idx = 2
-        elif 'A' in survey[i]:
-            type_idx = 3
-        
+    for i in range(len(survey)):
         choice = choices[i]
-        disagree_type = survey[i][0]
-        agree_type = survey[i][1]
         if choice < 4:
-            metrics[type_idx][disagree_type] += 4 - choice
+            scores[survey[i][0]] += 4 - choice
         elif choice > 4:
-            metrics[type_idx][agree_type] += choice - 4
-
-
+            scores[survey[i][1]] += choice - 4
+    
     answer = ''
+    if scores["R"] >= scores["T"]:
+        answer += "R"
+    else:
+        answer += "T"
 
-    if metric_rt['R'] >= metric_rt['T']:
-        answer += 'R'
+    if scores["C"] >= scores["F"]:
+        answer += "C"
     else:
-        answer += 'T'
-    
-    if metric_cf['C'] >= metric_cf['F']:
-        answer += 'C'
-    else:
-        answer += 'F'
+        answer += "F"
 
-    if metric_jm['J'] >= metric_jm['M']:
-        answer += 'J'
+    if scores["J"] >= scores["M"]:
+        answer += "J"
     else:
-        answer += 'M'
+        answer += "M"
     
-    if metric_an['A'] >= metric_an['N']:
-        answer += 'A'
+    if scores["A"] >= scores["N"]:
+        answer += "A"
     else:
-        answer += 'N'
+        answer += "N"
     
     return answer
 
