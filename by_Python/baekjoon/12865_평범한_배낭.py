@@ -1,28 +1,21 @@
 import sys
 input = sys.stdin.readline
 
-# 입력
-N, K = map(int, input().split())
-W = [0]
-V = [0]
-for _ in range(N):
-    w, v = map(int, input().split())
-    W.append(w)
-    V.append(v)
+n, k = map(int, input().split())
 
-# dp 초기화
-dp = [[0] * (K+1) for _ in range(N + 1)]
+items = [(0, 0)]
+for _ in range(n):
+    wt, val = map(int, input().split())
+    items.append((wt, val))
 
-# dp[i][wt]:
-# i번째 물건까지 가방에 넣을 수 있는 경우,
-# 가방 무게가 wt라면 이 때의 가치합의 최대
-
-for i in range(1, N+1):
-    for wt in range(1, K+1):
-        if wt < W[i]:
+# dp[i][j] = i번째 물건을 넣어서 배낭 무게의 합이 총 j가 될 때, 가치의 합
+dp = [[0] * (k + 1) for _ in range(n+1)]
+for i in range(1, n+1):
+    i_wt, i_val = items[i]
+    for wt in range(1, k+1):
+        if wt < i_wt:
             dp[i][wt] = dp[i-1][wt]
         else:
-            dp[i][wt] = max(dp[i-1][wt-W[i]] + V[i], dp[i-1][wt])
-
+            dp[i][wt] = max(dp[i-1][wt - i_wt] + i_val, dp[i-1][wt])
 
 print(max(map(max, dp)))
