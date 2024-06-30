@@ -1,38 +1,25 @@
-# 참고: https://claude-u.tistory.com/427
 import sys
 input = sys.stdin.readline
 
-N, M = map(int, input().split())
-arr = [[0]*(N+1)] + [[0] + list(map(int, input().split())) for _ in range(N)]
+n, m = map(int, input().split())
 
+arr = [[0] * (n+1)] + [[0] + list(map(int, input().split())) for _ in range(n)]
 
-# 누적합
+# n*n 배열의 누적합을 구한다
+# prefix_sum[i][j] = (1, 1)  ~ (i, j) 까지의 누적합
+prefix_sum = [[0] * (n+1) for _ in range(n+1)]
+# 먼저, 가로로 구간 합을 구해준다
+for i in range(1, n+1):
+    for j in range(1, n+1):
+        prefix_sum[i][j] = prefix_sum[i][j-1] + arr[i][j]
+# 다음, 가로로 구해준 구간 합을 이용해 세로 구간 합을 구해준다
+for i in range(1, n+1):
+    for j in range(1, n+1):
+        prefix_sum[j][i] += prefix_sum[j-1][i]
 
-# version 1
-# prefix_sum[r][c]: r행의 1번째 열의 숫자부터 c번째 열의 숫자까지의 합
-prefix_sum = [[0]*(N+1) for _ in range(N+1)]
-for r in range(1, N+1):
-    for c in range(1, N+1):
-        prefix_sum[r][c] = prefix_sum[r][c-1] + arr[r][c]
-
-for _ in range(M):
-    x1, y1, x2, y2 = map(int, input().split())
-    ans = 0
-    for r in range(x1, x2+1):
-        ans += prefix_sum[r][y2] - prefix_sum[r][y1-1]
-    print(ans)
-
-
-# version 2
-# prefix_sum[r][c]: (1, 1,)부터 (r, c)까지의 합
-prefix_sum = [[0]*(N+1) for _ in range(N+1)]
-for r in range(1, N+1):
-    for c in range(1, N+1):
-        prefix_sum[r][c] = prefix_sum[r-1][c] + \
-            prefix_sum[r][c-1] - prefix_sum[r-1][c-1] + arr[r][c]
-
-for _ in range(M):
-    x1, y1, x2, y2 = map(int, input().split())
-    ans = prefix_sum[x2][y2] - prefix_sum[x2][y1-1] - \
-        prefix_sum[x1-1][y2] + prefix_sum[x1-1][y1-1]
+# (r1, c1) 부터 (r2, c2)까지의 합
+# prefix_sum[r2][c2] - prefix_sum[r1-1][c2] - prefix_sum[r2][c1-1] + 겹치는 구간인 prefix_sum[r1-1][c1-1]
+for _ in range(m):
+    r1, c1, r2, c2 = map(int, input().split())
+    ans = prefix_sum[r2][c2] - prefix_sum[r1-1][c2] - prefix_sum[r2][c1-1] + prefix_sum[r1-1][c1-1]
     print(ans)
