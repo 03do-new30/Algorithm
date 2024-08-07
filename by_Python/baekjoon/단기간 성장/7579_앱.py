@@ -28,5 +28,8 @@ for i in range(max_cost + 1):
             found_min_cost = True
             min_cost = i
             break
+
+for row in dp:
+    print(row)
         
 print(min_cost)
