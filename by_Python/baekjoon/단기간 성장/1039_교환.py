@@ -1,7 +1,7 @@
 import sys
 input = sys.stdin.readline
 
-def solve(n, m, k):
+def old_solve(n, m, k):
     # 한자리수이면 연산을 수행할 수 없다.
     if m == 1:
         return -1
@@ -58,8 +58,7 @@ def solve(n, m, k):
     print(max_n, "\nk_result", k_result)
     return ''.join(list(map(str, k_result[k])))
 
-
-def new_solve(n, m, k):
+def solve(n, m, k):
     # 한자리수이면 연산을 수행할 수 없다.
     if m == 1:
         return -1
@@ -142,7 +141,7 @@ n = list(map(int, n))
 m = len(n)
 
 # print(solve(n, m, k))
-print(new_solve(n, m, k))
+print(solve(n, m, k))
 
 """
 n,k=381993,3
