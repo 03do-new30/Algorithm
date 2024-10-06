@@ -21,7 +21,6 @@ block_dirs = {'|':[1, 1, 0, 0],
           'M':[1, 1, 1, 1],
           'Z':[1, 1, 1, 1]}
 
-# (r, c)에서 시작했을 때 연결이 끊기는 지점을 찾는다.
 def find_diconnection():
     mr = mc = -1
     for r in range(n):
