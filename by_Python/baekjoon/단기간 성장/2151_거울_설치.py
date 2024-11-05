@@ -38,8 +38,9 @@ while q:
 
     # 도착점에 도달한 경우
     if arr[r][c] == '#' and (r != start[0] or c != start[1]):
-        ans = min(ans, wt)
-        continue
+        ans = wt
+        # 0-1 BFS로 풀었으므로 처음 나온 답이 무조건 최소 거울 개수
+        break
 
     # 빛은 거울과 만나지 않는 이상 이전 진행 방향을 유지하며 직진한다.
     nr = r + dr[dir]
